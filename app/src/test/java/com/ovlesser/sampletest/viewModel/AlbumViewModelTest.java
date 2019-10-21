@@ -2,7 +2,11 @@ package com.ovlesser.sampletest.viewModel;
 
 import android.content.Context;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import com.ovlesser.sampletest.TestSchedulerRule;
+import com.ovlesser.sampletest.model.Photo;
 import com.ovlesser.sampletest.model.Photos;
 import com.ovlesser.sampletest.model.Users;
 import com.ovlesser.sampletest.network.ContentApiService;
@@ -21,11 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-import io.reactivex.functions.Predicate;
-import io.reactivex.observers.TestObserver;
-
-import static io.reactivex.Single.just;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -61,9 +60,9 @@ public class AlbumViewModelTest {
     // test the mapping from response of the user API to the List<UserViewModel> with mock data
     @Test
     public void checkFetch() {
-        when(contentApiService.photos(users.users[1].getId())).thenReturn(
-                just(Arrays.asList(photos.photos))
-        );
+        MutableLiveData<List<Photo>> liveData = new MutableLiveData<List<Photo>>();
+        liveData.setValue((Arrays.asList(photos.photos)));
+        when(contentApiService.photos(users.users[1].getId())).thenReturn(  mock(LiveData.class));
 
         TestObserver<List<PhotoViewModel>> testObserver = albumViewModel.fetch().test();
 
